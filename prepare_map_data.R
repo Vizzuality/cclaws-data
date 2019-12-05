@@ -53,6 +53,14 @@ ds$description = paste("This dataset shows carbon dioxide emissions from the use
 datasauce::write_jsonld(ds, "emissions_total_fossil_fuels_and_cement_in_MtCO2e_2018.jsonld")
 
 
+# Cumalitive CO2
+cco <- read_csv("raw_data/cumulative-co-emissions.csv")
+View(cco)
+names(cco) <- c("name", "iso3", "year", "cumulaitive_emissions_total_fossil_fuels_and_cement_in_MtCO2e_2017")
+out <- cco %>% filter(year==2017)
+View(out)
+out$cumulaitive_emissions_total_fossil_fuels_and_cement_in_MtCO2e_2017 <- out$cumulaitive_emissions_total_fossil_fuels_and_cement_in_MtCO2e_2017/10^6
+View(out)
 
 
 ################################################################################
