@@ -52,6 +52,43 @@ ds$name = "CAIT Country Greenhouse Gas Emissions Data (2016)"
 ds$description = paste("This dataset shows total green house gas emissions from the use of coal, oil and gas (combustion and industrial processes), the process of gas flaring and the manufacture of cement, land-use changes, and forestry for the year 2016 grouped by country.", g_desc)
 datasauce::write_jsonld(ds, "prep_data/emissions_total_fossil_fuels_and_cement_including LUCF_in_MtCO2e_2016.jsonld")
 
+# Climate Watch
+# Global % of emmissions by country including land use change
+
+# Create general metadata structure
+org <- datasauce::Organization(
+  name = "World Resources Institute",
+  url = "http://cait.wri.org/historical/",
+  contactPoint = datasauce::ContactPoint(
+    email = "jfriedrich@wri.org",
+    contactType = "Dataset enquiries"
+  )
+)
+ds <- datasauce::Dataset(
+  creator = org,
+  sameAs = "https://www.climatewatchdata.org/ghg-emissions",
+  temporalCoverage = "2016",
+  isAccessibleForFree = T,
+  license = "http://creativecommons.org/licenses/by/4.0/",
+  keywords = c("Carbon dioxide", "Fossil fuel", "Emissions", "Land-Use change and forestry", "Percentage")
+)
+g_desc <- "As of December 2019, CAIT Historical Emission data contains sector-level greenhouse gas (GHG) emissions data for 185 countries and the European Union (EU) for the period 1990-2016, including emissions of the six major GHGs from most major sources and sinks. See http://cait.wri.org/docs/CAIT2.0_CountryGHG_Methods.pdf for details regarding data source and methodology. Cautions: CAIT data are derived from several sources. Any use of the Land-Use Change and Forestry or Agriculture indicator should be cited as FAO 2019, FAOSTAT Emissions Database. Any use of CO2 emissions from fuel combustion data should be cited as CO2 Emissions from Fuel Combustion, OECD/IEA, 2018."
+
+library(readr)
+ghg <- read_csv("raw_data/cait_historical_emissions_ghgs_with_lucf.csv")
+ghg$iso3 <- countrycode::countrycode(ghg$Country, "country.name", "iso3c")
+View(ghg)
+out <- ghg[,c("iso3", "2016")]
+out <- na.omit(out)
+out$'2016' <- (out$'2016' / sum(out$'2016')) * 100
+names(out) <- c("iso3", "emissions_total_fossil_fuels_and_cement_including LUCF_in_percent_2016")
+write.csv(out,
+          "prep_data/emissions_total_fossil_fuels_and_cement_including LUCF_in_percent_2016.csv",
+          row.names = F)
+# export metadata
+ds$name = "CAIT Country Greenhouse Gas Emissions Data (2016)"
+ds$description = paste("This dataset shows percent (%) of global green house gas emissions from the use of coal, oil and gas (combustion and industrial processes), the process of gas flaring and the manufacture of cement, land-use changes, and forestry for the year 2016 grouped by country.", g_desc)
+datasauce::write_jsonld(ds, "prep_data/emissions_total_fossil_fuels_and_cement_including LUCF_in_percent_2016.jsonld")
 
 
 
